@@ -1,4 +1,3 @@
-Got it! Here's the **fully rewritten README** for your fork of Open WebUI, including all your customizations, updates, and license clarification:
 
 ---
 
