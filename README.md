@@ -7,13 +7,13 @@
 
 ---
 
-![GitHub stars](https://img.shields.io/github/stars/open-webui/open-webui?style=social)
-![GitHub forks](https://img.shields.io/github/forks/open-webui/open-webui?style=social)
-![GitHub watchers](https://img.shields.io/github/watchers/open-webui/open-webui?style=social)
-![GitHub repo size](https://img.shields.io/github/repo-size/open-webui/open-webui)
-![GitHub language count](https://img.shields.io/github/languages/count/open-webui/open-webui)
-![GitHub top language](https://img.shields.io/github/languages/top/open-webui/open-webui)
-![GitHub last commit](https://img.shields.io/github/last-commit/open-webui/open-webui?color=red)
+![GitHub stars](https://img.shields.io/github/stars/justinsanjp/better-open-webui?style=social)
+![GitHub forks](https://img.shields.io/github/forks/justinsanjp/better-open-webui?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/justinsanjp/better-open-webui?style=social)
+![GitHub repo size](https://img.shields.io/github/repo-size/justinsanjp/better-open-webui)
+![GitHub language count](https://img.shields.io/github/languages/count/justinsanjp/beter-open-webui)
+![GitHub top language](https://img.shields.io/github/languages/top/justinsanjp/better-open-webui)
+![GitHub last commit](https://img.shields.io/github/last-commit/justinsanjp/better-open-webui?color=red)
 
 ---
 
