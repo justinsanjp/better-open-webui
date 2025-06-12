@@ -18,6 +18,7 @@
 ---
 
 ## 🔥 What's New in This Fork?
+>these features are getting added soon!.
 
 This fork aims to improve and extend Open WebUI with new capabilities while maintaining compatibility with its core.
 
