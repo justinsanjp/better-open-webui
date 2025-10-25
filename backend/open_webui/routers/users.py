@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 
 from open_webui.models.auths import Auths
-from open_webui.models.groups import Groups
+from open_webui.models.groups import Groups, GroupResponse
 from open_webui.models.chats import Chats
 from open_webui.models.users import (
     UserModel,
@@ -42,6 +42,7 @@ async def get_users(
     query: Optional[str] = None,
     order_by: Optional[str] = None,
     direction: Optional[str] = None,
+    role: Optional[str] = None,
     page: Optional[int] = 1,
     user=Depends(get_admin_user),
 ):
@@ -57,6 +58,8 @@ async def get_users(
         filter["order_by"] = order_by
     if direction:
         filter["direction"] = direction
+    if role and role.lower() != "all":
+        filter["role"] = role
 
     return Users.get_users(filter=filter, skip=skip, limit=limit)
 
@@ -90,6 +93,22 @@ async def get_user_permissisions(request: Request, user=Depends(get_verified_use
     )
 
     return user_permissions
+
+
+@router.get("/{user_id}/permissions", response_model=UserPermissions)
+async def get_user_permissions_by_id(
+    user_id: str, request: Request, user=Depends(get_admin_user)
+):
+    user_permissions = get_permissions(
+        user_id, request.app.state.config.USER_PERMISSIONS
+    )
+
+    return UserPermissions(**user_permissions)
+
+
+@router.get("/{user_id}/groups", response_model=list[GroupResponse])
+async def get_user_groups_by_id(user_id: str, user=Depends(get_admin_user)):
+    return Groups.get_groups_by_member_id(user_id)
 
 
 ############################

@@ -1,12 +1,16 @@
 <script lang="ts">
-	import { models, showSettings, settings, user, mobile, config } from '$lib/stores';
-	import { onMount, tick, getContext } from 'svelte';
-	import { toast } from 'svelte-sonner';
-	import Selector from './ModelSelector/Selector.svelte';
-	import Tooltip from '../common/Tooltip.svelte';
+        import { models, showSettings, settings, user, mobile, config } from '$lib/stores';
+        import { onMount, tick, getContext } from 'svelte';
+        import { toast } from 'svelte-sonner';
+        import Selector from './ModelSelector/Selector.svelte';
+        import Tooltip from '../common/Tooltip.svelte';
+        import { NON_ADMIN_ROLES } from '$lib/constants';
 
 	import { updateUserSettings } from '$lib/apis/users';
-	const i18n = getContext('i18n');
+        const i18n = getContext('i18n');
+
+        const isNonAdminRole = (role?: string) =>
+                role ? (NON_ADMIN_ROLES as readonly string[]).includes(role) : false;
 
 	export let selectedModels = [''];
 	export let disabled = false;
@@ -58,10 +62,10 @@
 							label: model.name,
 							model: model
 						}))}
-						showTemporaryChatControl={$user?.role === 'user'
-							? ($user?.permissions?.chat?.temporary ?? true) &&
-								!($user?.permissions?.chat?.temporary_enforced ?? false)
-							: true}
+                                                showTemporaryChatControl={isNonAdminRole($user?.role)
+                                                        ? ($user?.permissions?.chat?.temporary ?? true) &&
+                                                                !($user?.permissions?.chat?.temporary_enforced ?? false)
+                                                        : true}
 						{pinModelHandler}
 						bind:value={selectedModel}
 					/>

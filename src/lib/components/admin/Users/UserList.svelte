@@ -1,5 +1,5 @@
 <script>
-	import { WEBUI_BASE_URL } from '$lib/constants';
+        import { WEBUI_BASE_URL, ROLE_DEFINITIONS, ROLE_ORDER } from '$lib/constants';
 	import { WEBUI_NAME, config, user, showSidebar } from '$lib/stores';
 	import { goto } from '$app/navigation';
 	import { onMount, getContext } from 'svelte';
@@ -22,8 +22,7 @@
 	import UserChatsModal from '$lib/components/admin/Users/UserList/UserChatsModal.svelte';
 	import AddUserModal from '$lib/components/admin/Users/UserList/AddUserModal.svelte';
 
-	import ConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
-	import RoleUpdateConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
+import ConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
 
 	import Badge from '$lib/components/common/Badge.svelte';
 	import Plus from '$lib/components/icons/Plus.svelte';
@@ -32,26 +31,31 @@
 	import About from '$lib/components/chat/Settings/About.svelte';
 	import Banner from '$lib/components/common/Banner.svelte';
 	import Markdown from '$lib/components/chat/Messages/Markdown.svelte';
-	import Spinner from '$lib/components/common/Spinner.svelte';
+        import Spinner from '$lib/components/common/Spinner.svelte';
+        import LockClosed from '$lib/components/icons/LockClosed.svelte';
 
-	const i18n = getContext('i18n');
+        const i18n = getContext('i18n');
 
-	let page = 1;
+        type RoleKey = (typeof ROLE_ORDER)[number];
 
-	let users = null;
-	let total = null;
+        let page = 1;
 
-	let query = '';
-	let orderBy = 'created_at'; // default sort key
-	let direction = 'asc'; // default sort order
+        let users = null;
+        let total = null;
 
-	let selectedUser = null;
+        let query = '';
+        let orderBy = 'created_at'; // default sort key
+        let direction = 'asc'; // default sort order
+        let roleFilter: string = 'all';
 
-	let showDeleteConfirmDialog = false;
-	let showAddUserModal = false;
+        let selectedUser = null;
 
-	let showUserChatsModal = false;
-	let showEditUserModal = false;
+        let showDeleteConfirmDialog = false;
+        let showAddUserModal = false;
+
+        let showUserChatsModal = false;
+        let showEditUserModal = false;
+        let editInitialTab: 'profile' | 'access' = 'profile';
 
 	const deleteUserHandler = async (id) => {
 		const res = await deleteUserById(localStorage.token, id).catch((error) => {
@@ -78,14 +82,21 @@
 		}
 	};
 
-	const getUserList = async () => {
-		try {
-			const res = await getUsers(localStorage.token, query, orderBy, direction, page).catch(
-				(error) => {
-					toast.error(`${error}`);
-					return null;
-				}
-			);
+        const getUserList = async () => {
+                try {
+                        const res = await getUsers(
+                                localStorage.token,
+                                query,
+                                orderBy,
+                                direction,
+                                page,
+                                roleFilter === 'all' ? undefined : roleFilter
+                        ).catch(
+                                (error) => {
+                                        toast.error(`${error}`);
+                                        return null;
+                                }
+                        );
 
 			if (res) {
 				users = res.users;
@@ -100,9 +111,22 @@
 		getUserList();
 	}
 
-	$: if (query !== null && orderBy && direction) {
-		getUserList();
-	}
+        $: if (query !== null && orderBy && direction && roleFilter !== null) {
+                getUserList();
+        }
+
+        const setRoleFilter = (role: string) => {
+                roleFilter = role;
+                page = 1;
+        };
+
+        const getRoleMeta = (role: string) => ROLE_DEFINITIONS[role as RoleKey] ?? ROLE_DEFINITIONS.pending;
+
+        $: roleSummary = ROLE_ORDER.map((role) => ({
+                role,
+                meta: ROLE_DEFINITIONS[role],
+                count: users ? users.filter((user) => user.role === role).length : 0
+        }));
 </script>
 
 <ConfirmDialog
@@ -113,14 +137,15 @@
 />
 
 {#key selectedUser}
-	<EditUserModal
-		bind:show={showEditUserModal}
-		{selectedUser}
-		sessionUser={$user}
-		on:save={async () => {
-			getUserList();
-		}}
-	/>
+        <EditUserModal
+                bind:show={showEditUserModal}
+                {selectedUser}
+                sessionUser={$user}
+                initialTab={editInitialTab}
+                on:save={async () => {
+                        getUserList();
+                }}
+        />
 {/key}
 
 <AddUserModal
@@ -218,9 +243,35 @@
 		</div>
 	</div>
 
-	<div
-		class="scrollbar-hidden relative whitespace-nowrap overflow-x-auto max-w-full rounded-sm pt-0.5"
-	>
+        <div class="px-0.5 mb-3 flex flex-wrap gap-2 text-xs">
+                <button
+                        type="button"
+                        class={`px-3 py-1.5 rounded-full border transition ${roleFilter === 'all'
+                                ? 'bg-black text-white dark:bg-white dark:text-black border-transparent'
+                                : 'border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-600'}`}
+                        on:click={() => setRoleFilter('all')}
+                >
+                        <span class="font-medium">{$i18n.t('All')}</span>
+                        <span class="ml-2 text-[11px] text-gray-300 dark:text-gray-500">{total}</span>
+                </button>
+
+                {#each roleSummary as summary}
+                        <button
+                                type="button"
+                                class={`px-3 py-1.5 rounded-full border transition flex items-center gap-2 ${roleFilter === summary.role
+                                        ? 'bg-gray-900 text-white dark:bg-white dark:text-black border-transparent'
+                                        : 'border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-600'}`}
+                                on:click={() => setRoleFilter(summary.role)}
+                        >
+                                <span class="font-medium">{$i18n.t(summary.meta.label)}</span>
+                                <span class="text-[11px] text-gray-300 dark:text-gray-500">{summary.count}</span>
+                        </button>
+                {/each}
+        </div>
+
+        <div
+                class="scrollbar-hidden relative whitespace-nowrap overflow-x-auto max-w-full rounded-sm pt-0.5"
+        >
 		<table
 			class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-auto max-w-full rounded-sm"
 		>
@@ -374,20 +425,21 @@
 			<tbody class="">
 				{#each users as user, userIdx}
 					<tr class="bg-white dark:bg-gray-900 dark:border-gray-850 text-xs">
-						<td class="px-3 py-1 min-w-[7rem] w-28">
-							<button
-								class=" translate-y-0.5"
-								on:click={() => {
-									selectedUser = user;
-									showEditUserModal = !showEditUserModal;
-								}}
-							>
-								<Badge
-									type={user.role === 'admin' ? 'info' : user.role === 'user' ? 'success' : 'muted'}
-									content={$i18n.t(user.role)}
-								/>
-							</button>
-						</td>
+                                                <td class="px-3 py-1 min-w-[7rem] w-32">
+                                                        {@const roleMeta = getRoleMeta(user.role);}
+                                                        <button
+                                                                class="translate-y-0.5"
+                                                                on:click={() => {
+                                                                        selectedUser = user;
+                                                                        editInitialTab = 'profile';
+                                                                        showEditUserModal = true;
+                                                                }}
+                                                        >
+                                                                <Tooltip content={$i18n.t(roleMeta.description)}>
+                                                                        <Badge type={roleMeta.badge} content={$i18n.t(roleMeta.label)} />
+                                                                </Tooltip>
+                                                        </button>
+                                                </td>
 						<td class="px-3 py-1 font-medium text-gray-900 dark:text-white w-max">
 							<div class="flex flex-row w-max">
 								<img
@@ -417,29 +469,43 @@
 
 						<td class="px-3 py-1 text-right">
 							<div class="flex justify-end w-full">
-								{#if $config.features.enable_admin_chat_access && user.role !== 'admin'}
-									<Tooltip content={$i18n.t('Chats')}>
-										<button
-											class="self-center w-fit text-sm px-2 py-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
-											on:click={async () => {
-												showUserChatsModal = !showUserChatsModal;
-												selectedUser = user;
-											}}
-										>
-											<ChatBubbles />
-										</button>
-									</Tooltip>
-								{/if}
+                                                                {#if $config.features.enable_admin_chat_access && user.role !== 'admin'}
+                                                                        <Tooltip content={$i18n.t('Chats')}>
+                                                                                <button
+                                                                                        class="self-center w-fit text-sm px-2 py-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
+                                                                                        on:click={async () => {
+                                                                                                showUserChatsModal = true;
+                                                                                                selectedUser = user;
+                                                                                        }}
+                                                                                >
+                                                                                        <ChatBubbles />
+                                                                                </button>
+                                                                        </Tooltip>
+                                                                {/if}
 
-								<Tooltip content={$i18n.t('Edit User')}>
-									<button
-										class="self-center w-fit text-sm px-2 py-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
-										on:click={async () => {
-											showEditUserModal = !showEditUserModal;
-											selectedUser = user;
-										}}
-									>
-										<svg
+                                                                <Tooltip content={$i18n.t('Access')}>
+                                                                        <button
+                                                                                class="self-center w-fit text-sm px-2 py-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
+                                                                                on:click={() => {
+                                                                                        selectedUser = user;
+                                                                                        editInitialTab = 'access';
+                                                                                        showEditUserModal = true;
+                                                                                }}
+                                                                        >
+                                                                                <LockClosed class="w-4 h-4" />
+                                                                        </button>
+                                                                </Tooltip>
+
+                                                                <Tooltip content={$i18n.t('Edit User')}>
+                                                                        <button
+                                                                                class="self-center w-fit text-sm px-2 py-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
+                                                                                on:click={() => {
+                                                                                        selectedUser = user;
+                                                                                        editInitialTab = 'profile';
+                                                                                        showEditUserModal = true;
+                                                                                }}
+                                                                        >
+                                                                                <svg
 											xmlns="http://www.w3.org/2000/svg"
 											fill="none"
 											viewBox="0 0 24 24"

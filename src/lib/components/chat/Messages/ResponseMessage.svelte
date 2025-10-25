@@ -28,7 +28,7 @@
 		removeDetails,
 		removeAllDetails
 	} from '$lib/utils';
-	import { WEBUI_BASE_URL } from '$lib/constants';
+        import { WEBUI_BASE_URL, NON_ADMIN_ROLES } from '$lib/constants';
 
 	import Name from './Name.svelte';
 	import ProfileImage from './ProfileImage.svelte';
@@ -965,7 +965,7 @@
 
 							{#if message.done}
 								{#if !readOnly}
-									{#if $user?.role === 'user' ? ($user?.permissions?.chat?.edit ?? true) : true}
+                                                                        {#if isNonAdminRole($user?.role) ? ($user?.permissions?.chat?.edit ?? true) : true}
 										<Tooltip content={$i18n.t('Edit')} placement="bottom">
 											<button
 												aria-label={$i18n.t('Edit')}
@@ -1489,3 +1489,5 @@
 		scrollbar-width: none; /* Firefox */
 	}
 </style>
+        const isNonAdminRole = (role?: string) =>
+                role ? (NON_ADMIN_ROLES as readonly string[]).includes(role) : false;
