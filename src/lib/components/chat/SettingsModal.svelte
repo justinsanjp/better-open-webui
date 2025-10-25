@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { config, models, settings, user } from '$lib/stores';
-	import { updateUserSettings } from '$lib/apis/users';
-	import { getModels as _getModels } from '$lib/apis';
-	import { goto } from '$app/navigation';
+        import { config, models, settings, user } from '$lib/stores';
+        import { updateUserSettings } from '$lib/apis/users';
+        import { getModels as _getModels } from '$lib/apis';
+        import { goto } from '$app/navigation';
+        import { NON_ADMIN_ROLES } from '$lib/constants';
 
 	import Modal from '../common/Modal.svelte';
 	import Account from './Settings/Account.svelte';
@@ -192,7 +193,7 @@
 			]
 		},
 		...($user?.role === 'admin' ||
-		($user?.role === 'user' && $config?.features?.enable_direct_connections)
+            (isNonAdminRole($user?.role) && $config?.features?.enable_direct_connections)
 			? [
 					{
 						id: 'connections',
@@ -211,7 +212,7 @@
 			: []),
 
 		...($user?.role === 'admin' ||
-		($user?.role === 'user' && $user?.permissions?.features?.direct_tool_servers)
+            (isNonAdminRole($user?.role) && $user?.permissions?.features?.direct_tool_servers)
 			? [
 					{
 						id: 'tools',
@@ -642,7 +643,7 @@
 								<div class=" self-center">{$i18n.t('Interface')}</div>
 							</button>
 						{:else if tabId === 'connections'}
-							{#if $user?.role === 'admin' || ($user?.role === 'user' && $config?.features?.enable_direct_connections)}
+                                                    {#if $user?.role === 'admin' || (isNonAdminRole($user?.role) && $config?.features?.enable_direct_connections)}
 								<button
 									class={`px-0.5 py-1 min-w-fit rounded-lg flex-1 md:flex-none flex text-left transition
 								${
@@ -674,7 +675,7 @@
 								</button>
 							{/if}
 						{:else if tabId === 'tools'}
-							{#if $user?.role === 'admin' || ($user?.role === 'user' && $user?.permissions?.features?.direct_tool_servers)}
+                                                    {#if $user?.role === 'admin' || (isNonAdminRole($user?.role) && $user?.permissions?.features?.direct_tool_servers)}
 								<button
 									class={`px-0.5 py-1 min-w-fit rounded-lg flex-1 md:flex-none flex text-left transition
 								${
@@ -979,3 +980,5 @@
 		-moz-appearance: textfield; /* Firefox */
 	}
 </style>
+        const isNonAdminRole = (role?: string) =>
+                role ? (NON_ADMIN_ROLES as readonly string[]).includes(role) : false;

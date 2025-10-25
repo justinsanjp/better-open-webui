@@ -208,15 +208,23 @@ type Config = {
 		enable_signup: boolean;
 		enable_login_form: boolean;
 		enable_web_search?: boolean;
-		enable_google_drive_integration: boolean;
-		enable_onedrive_integration: boolean;
-		enable_image_generation: boolean;
-		enable_admin_export: boolean;
-		enable_admin_chat_access: boolean;
-		enable_community_sharing: boolean;
-		enable_autocomplete_generation: boolean;
-		enable_direct_connections: boolean;
-	};
+                enable_google_drive_integration: boolean;
+                enable_onedrive_integration: boolean;
+                enable_image_generation: boolean;
+                enable_admin_export: boolean;
+                enable_admin_chat_access: boolean;
+                enable_community_sharing: boolean;
+                enable_autocomplete_generation: boolean;
+                enable_direct_connections: boolean;
+                enable_codex_agents?: boolean;
+                subscriptions?: {
+                        enabled: boolean;
+                        providers: {
+                                stripe: boolean;
+                                paypal: boolean;
+                        };
+                };
+        };
 	oauth: {
 		providers: {
 			[key: string]: string;

@@ -57,9 +57,10 @@
 	import { getChannels, createNewChannel } from '$lib/apis/channels';
 	import ChannelModal from './Sidebar/ChannelModal.svelte';
 	import ChannelItem from './Sidebar/ChannelItem.svelte';
-	import PencilSquare from '../icons/PencilSquare.svelte';
-	import Home from '../icons/Home.svelte';
-	import MagnifyingGlass from '../icons/MagnifyingGlass.svelte';
+        import PencilSquare from '../icons/PencilSquare.svelte';
+        import Home from '../icons/Home.svelte';
+        import MagnifyingGlass from '../icons/MagnifyingGlass.svelte';
+        import CommandLine from '../icons/CommandLine.svelte';
 	import SearchModal from './SearchModal.svelte';
 
 	const BREAKPOINT = 768;
@@ -564,11 +565,11 @@
 			</button>
 		</div>
 
-		{#if ($config?.features?.enable_notes ?? false) && ($user?.role === 'admin' || ($user?.permissions?.features?.notes ?? true))}
-			<div class="px-1.5 flex justify-center text-gray-800 dark:text-gray-200">
-				<a
-					class="grow flex items-center space-x-3 rounded-lg px-2 py-[7px] hover:bg-gray-100 dark:hover:bg-gray-900 transition"
-					href="/notes"
+                {#if ($config?.features?.enable_notes ?? false) && ($user?.role === 'admin' || ($user?.permissions?.features?.notes ?? true))}
+                        <div class="px-1.5 flex justify-center text-gray-800 dark:text-gray-200">
+                                <a
+                                        class="grow flex items-center space-x-3 rounded-lg px-2 py-[7px] hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+                                        href="/notes"
 					on:click={() => {
 						selectedChatId = null;
 						chatId.set('');
@@ -602,9 +603,35 @@
 					<div class="flex self-center translate-y-[0.5px]">
 						<div class=" self-center font-medium text-sm font-primary">{$i18n.t('Notes')}</div>
 					</div>
-				</a>
-			</div>
-		{/if}
+                                </a>
+                        </div>
+                {/if}
+
+                {#if $config?.features?.enable_codex_agents}
+                        <div class="px-1.5 flex justify-center text-gray-800 dark:text-gray-200">
+                                <a
+                                        class="grow flex items-center space-x-3 rounded-lg px-2 py-[7px] hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+                                        href="/codex"
+                                        on:click={() => {
+                                                selectedChatId = null;
+                                                chatId.set('');
+
+                                                if ($mobile) {
+                                                        showSidebar.set(false);
+                                                }
+                                        }}
+                                        draggable="false"
+                                >
+                                        <div class="self-center">
+                                                <CommandLine strokeWidth="2" className="size-[1.1rem]" />
+                                        </div>
+
+                                        <div class="flex self-center translate-y-[0.5px]">
+                                                <div class=" self-center font-medium text-sm font-primary">{$i18n.t('Codex Agents')}</div>
+                                        </div>
+                                </a>
+                        </div>
+                {/if}
 
 		{#if $user?.role === 'admin' || $user?.permissions?.workspace?.models || $user?.permissions?.workspace?.knowledge || $user?.permissions?.workspace?.prompts || $user?.permissions?.workspace?.tools}
 			<div class="px-1.5 flex justify-center text-gray-800 dark:text-gray-200">

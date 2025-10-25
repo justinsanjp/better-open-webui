@@ -186,6 +186,10 @@ class UsersTable:
                         )
                     )
 
+                role_filter = filter.get("role")
+                if role_filter:
+                    query = query.filter(User.role == role_filter)
+
                 order_by = filter.get("order_by")
                 direction = filter.get("direction")
 

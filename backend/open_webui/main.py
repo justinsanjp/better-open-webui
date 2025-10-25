@@ -648,6 +648,10 @@ app.state.config.ENABLE_NOTES = ENABLE_NOTES
 app.state.config.ENABLE_COMMUNITY_SHARING = ENABLE_COMMUNITY_SHARING
 app.state.config.ENABLE_MESSAGE_RATING = ENABLE_MESSAGE_RATING
 app.state.config.ENABLE_USER_WEBHOOKS = ENABLE_USER_WEBHOOKS
+app.state.config.ENABLE_SUBSCRIPTIONS = ENABLE_SUBSCRIPTIONS
+app.state.config.ENABLE_STRIPE_SUBSCRIPTIONS = ENABLE_STRIPE_SUBSCRIPTIONS
+app.state.config.ENABLE_PAYPAL_SUBSCRIPTIONS = ENABLE_PAYPAL_SUBSCRIPTIONS
+app.state.config.ENABLE_CODEX_AGENTS = ENABLE_CODEX_AGENTS
 
 app.state.config.ENABLE_EVALUATION_ARENA_MODELS = ENABLE_EVALUATION_ARENA_MODELS
 app.state.config.EVALUATION_ARENA_MODELS = EVALUATION_ARENA_MODELS
@@ -1225,7 +1229,7 @@ async def get_models(request: Request, user=Depends(get_verified_user)):
         )
 
     # Filter out models that the user does not have access to
-    if user.role == "user" and not BYPASS_MODEL_ACCESS_CONTROL:
+    if user.role != "admin" and not BYPASS_MODEL_ACCESS_CONTROL:
         models = get_filtered_models(models, user)
 
     log.debug(
@@ -1294,7 +1298,7 @@ async def chat_completion(
             model_info = Models.get_model_by_id(model_id)
 
             # Check if user has access to the model
-            if not BYPASS_MODEL_ACCESS_CONTROL and user.role == "user":
+            if not BYPASS_MODEL_ACCESS_CONTROL and user.role != "admin":
                 try:
                     check_model_access(user, model)
                 except Exception as e:
@@ -1503,6 +1507,14 @@ async def get_app_config(request: Request):
                     "enable_community_sharing": app.state.config.ENABLE_COMMUNITY_SHARING,
                     "enable_message_rating": app.state.config.ENABLE_MESSAGE_RATING,
                     "enable_user_webhooks": app.state.config.ENABLE_USER_WEBHOOKS,
+                    "enable_codex_agents": app.state.config.ENABLE_CODEX_AGENTS,
+                    "subscriptions": {
+                        "enabled": app.state.config.ENABLE_SUBSCRIPTIONS,
+                        "providers": {
+                            "stripe": app.state.config.ENABLE_STRIPE_SUBSCRIPTIONS,
+                            "paypal": app.state.config.ENABLE_PAYPAL_SUBSCRIPTIONS,
+                        },
+                    },
                     "enable_admin_export": ENABLE_ADMIN_EXPORT,
                     "enable_admin_chat_access": ENABLE_ADMIN_CHAT_ACCESS,
                     "enable_google_drive_integration": app.state.config.ENABLE_GOOGLE_DRIVE_INTEGRATION,

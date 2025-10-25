@@ -1250,6 +1250,30 @@ ENABLE_USER_WEBHOOKS = PersistentConfig(
     os.environ.get("ENABLE_USER_WEBHOOKS", "True").lower() == "true",
 )
 
+ENABLE_SUBSCRIPTIONS = PersistentConfig(
+    "ENABLE_SUBSCRIPTIONS",
+    "features.subscriptions.enable",
+    os.environ.get("ENABLE_SUBSCRIPTIONS", "False").lower() == "true",
+)
+
+ENABLE_STRIPE_SUBSCRIPTIONS = PersistentConfig(
+    "ENABLE_STRIPE_SUBSCRIPTIONS",
+    "features.subscriptions.providers.stripe",
+    os.environ.get("ENABLE_STRIPE_SUBSCRIPTIONS", "False").lower() == "true",
+)
+
+ENABLE_PAYPAL_SUBSCRIPTIONS = PersistentConfig(
+    "ENABLE_PAYPAL_SUBSCRIPTIONS",
+    "features.subscriptions.providers.paypal",
+    os.environ.get("ENABLE_PAYPAL_SUBSCRIPTIONS", "False").lower() == "true",
+)
+
+ENABLE_CODEX_AGENTS = PersistentConfig(
+    "ENABLE_CODEX_AGENTS",
+    "features.codex_agents.enable",
+    os.environ.get("ENABLE_CODEX_AGENTS", "False").lower() == "true",
+)
+
 # FastAPI / AnyIO settings
 THREAD_POOL_SIZE = os.getenv("THREAD_POOL_SIZE", None)
 

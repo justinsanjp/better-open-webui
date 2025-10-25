@@ -64,6 +64,15 @@ router = APIRouter()
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])
 
+ALLOWED_USER_ROLES = [
+    "pending",
+    "user",
+    "manager",
+    "developer",
+    "viewer",
+    "admin",
+]
+
 ############################
 # GetSessionUser
 ############################
@@ -720,6 +729,10 @@ async def get_admin_config(request: Request, user=Depends(get_admin_user)):
         "ENABLE_CHANNELS": request.app.state.config.ENABLE_CHANNELS,
         "ENABLE_NOTES": request.app.state.config.ENABLE_NOTES,
         "ENABLE_USER_WEBHOOKS": request.app.state.config.ENABLE_USER_WEBHOOKS,
+        "ENABLE_SUBSCRIPTIONS": request.app.state.config.ENABLE_SUBSCRIPTIONS,
+        "ENABLE_STRIPE_SUBSCRIPTIONS": request.app.state.config.ENABLE_STRIPE_SUBSCRIPTIONS,
+        "ENABLE_PAYPAL_SUBSCRIPTIONS": request.app.state.config.ENABLE_PAYPAL_SUBSCRIPTIONS,
+        "ENABLE_CODEX_AGENTS": request.app.state.config.ENABLE_CODEX_AGENTS,
         "PENDING_USER_OVERLAY_TITLE": request.app.state.config.PENDING_USER_OVERLAY_TITLE,
         "PENDING_USER_OVERLAY_CONTENT": request.app.state.config.PENDING_USER_OVERLAY_CONTENT,
         "RESPONSE_WATERMARK": request.app.state.config.RESPONSE_WATERMARK,
@@ -740,6 +753,10 @@ class AdminConfig(BaseModel):
     ENABLE_CHANNELS: bool
     ENABLE_NOTES: bool
     ENABLE_USER_WEBHOOKS: bool
+    ENABLE_SUBSCRIPTIONS: bool
+    ENABLE_STRIPE_SUBSCRIPTIONS: bool
+    ENABLE_PAYPAL_SUBSCRIPTIONS: bool
+    ENABLE_CODEX_AGENTS: bool
     PENDING_USER_OVERLAY_TITLE: Optional[str] = None
     PENDING_USER_OVERLAY_CONTENT: Optional[str] = None
     RESPONSE_WATERMARK: Optional[str] = None
@@ -764,7 +781,7 @@ async def update_admin_config(
     request.app.state.config.ENABLE_CHANNELS = form_data.ENABLE_CHANNELS
     request.app.state.config.ENABLE_NOTES = form_data.ENABLE_NOTES
 
-    if form_data.DEFAULT_USER_ROLE in ["pending", "user", "admin"]:
+    if form_data.DEFAULT_USER_ROLE in ALLOWED_USER_ROLES:
         request.app.state.config.DEFAULT_USER_ROLE = form_data.DEFAULT_USER_ROLE
 
     pattern = r"^(-1|0|(-?\d+(\.\d+)?)(ms|s|m|h|d|w))$"
@@ -779,6 +796,14 @@ async def update_admin_config(
     request.app.state.config.ENABLE_MESSAGE_RATING = form_data.ENABLE_MESSAGE_RATING
 
     request.app.state.config.ENABLE_USER_WEBHOOKS = form_data.ENABLE_USER_WEBHOOKS
+    request.app.state.config.ENABLE_SUBSCRIPTIONS = form_data.ENABLE_SUBSCRIPTIONS
+    request.app.state.config.ENABLE_STRIPE_SUBSCRIPTIONS = (
+        form_data.ENABLE_STRIPE_SUBSCRIPTIONS
+    )
+    request.app.state.config.ENABLE_PAYPAL_SUBSCRIPTIONS = (
+        form_data.ENABLE_PAYPAL_SUBSCRIPTIONS
+    )
+    request.app.state.config.ENABLE_CODEX_AGENTS = form_data.ENABLE_CODEX_AGENTS
 
     request.app.state.config.PENDING_USER_OVERLAY_TITLE = (
         form_data.PENDING_USER_OVERLAY_TITLE
@@ -803,6 +828,10 @@ async def update_admin_config(
         "ENABLE_CHANNELS": request.app.state.config.ENABLE_CHANNELS,
         "ENABLE_NOTES": request.app.state.config.ENABLE_NOTES,
         "ENABLE_USER_WEBHOOKS": request.app.state.config.ENABLE_USER_WEBHOOKS,
+        "ENABLE_SUBSCRIPTIONS": request.app.state.config.ENABLE_SUBSCRIPTIONS,
+        "ENABLE_STRIPE_SUBSCRIPTIONS": request.app.state.config.ENABLE_STRIPE_SUBSCRIPTIONS,
+        "ENABLE_PAYPAL_SUBSCRIPTIONS": request.app.state.config.ENABLE_PAYPAL_SUBSCRIPTIONS,
+        "ENABLE_CODEX_AGENTS": request.app.state.config.ENABLE_CODEX_AGENTS,
         "PENDING_USER_OVERLAY_TITLE": request.app.state.config.PENDING_USER_OVERLAY_TITLE,
         "PENDING_USER_OVERLAY_CONTENT": request.app.state.config.PENDING_USER_OVERLAY_CONTENT,
         "RESPONSE_WATERMARK": request.app.state.config.RESPONSE_WATERMARK,

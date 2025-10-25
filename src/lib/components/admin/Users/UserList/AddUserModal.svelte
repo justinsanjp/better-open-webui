@@ -1,16 +1,27 @@
 <script lang="ts">
-	import { toast } from 'svelte-sonner';
-	import { createEventDispatcher } from 'svelte';
-	import { onMount, getContext } from 'svelte';
-	import { addUser } from '$lib/apis/auths';
+        import { toast } from 'svelte-sonner';
+        import { createEventDispatcher } from 'svelte';
+        import { onMount, getContext } from 'svelte';
+        import { addUser } from '$lib/apis/auths';
 
-	import { WEBUI_BASE_URL } from '$lib/constants';
+        import { WEBUI_BASE_URL, ROLE_DEFINITIONS, ROLE_ORDER } from '$lib/constants';
 
 	import Modal from '$lib/components/common/Modal.svelte';
 	import { generateInitialsImage } from '$lib/utils';
 
-	const i18n = getContext('i18n');
-	const dispatch = createEventDispatcher();
+        type RoleKey = (typeof ROLE_ORDER)[number];
+
+        const i18n = getContext('i18n');
+        const dispatch = createEventDispatcher();
+
+        const roleOptions = ROLE_ORDER.map((role) => ({
+                value: role,
+                label: ROLE_DEFINITIONS[role].label,
+                description: ROLE_DEFINITIONS[role].description
+        }));
+
+        const isValidRole = (role: string) =>
+                (ROLE_ORDER as readonly string[]).includes(role.toLowerCase());
 
 	export let show = false;
 
@@ -18,12 +29,15 @@
 	let tab = '';
 	let inputFiles;
 
-	let _user = {
-		name: '',
-		email: '',
-		password: '',
-		role: 'user'
-	};
+        let _user = {
+                name: '',
+                email: '',
+                password: '',
+                role: 'user'
+        };
+
+        $: selectedRoleMeta =
+                ROLE_DEFINITIONS[_user.role as RoleKey] ?? ROLE_DEFINITIONS.user;
 
 	$: if (show) {
 		_user = {
@@ -76,10 +90,10 @@
 						console.debug(idx, columns);
 
 						if (idx > 0) {
-							if (
-								columns.length === 4 &&
-								['admin', 'user', 'pending'].includes(columns[3].toLowerCase())
-							) {
+                                                        if (
+                                                                columns.length === 4 &&
+                                                                isValidRole(columns[3])
+                                                        ) {
 								const res = await addUser(
 									localStorage.token,
 									columns[0],
@@ -179,22 +193,27 @@
 
 					<div class="px-1">
 						{#if tab === ''}
-							<div class="flex flex-col w-full mb-3">
-								<div class=" mb-1 text-xs text-gray-500">{$i18n.t('Role')}</div>
+                                                        <div class="flex flex-col w-full mb-3">
+                                                                <div class=" mb-1 text-xs text-gray-500">{$i18n.t('Role')}</div>
 
-								<div class="flex-1">
-									<select
-										class="w-full capitalize rounded-lg text-sm bg-transparent dark:disabled:text-gray-500 outline-hidden"
-										bind:value={_user.role}
-										placeholder={$i18n.t('Enter Your Role')}
-										required
-									>
-										<option value="pending"> {$i18n.t('pending')} </option>
-										<option value="user"> {$i18n.t('user')} </option>
-										<option value="admin"> {$i18n.t('admin')} </option>
-									</select>
-								</div>
-							</div>
+                                                                <div class="flex-1">
+                                                                        <select
+                                                                                class="w-full capitalize rounded-lg text-sm bg-transparent dark:disabled:text-gray-500 outline-hidden"
+                                                                                bind:value={_user.role}
+                                                                                placeholder={$i18n.t('Select a role')}
+                                                                                required
+                                                                        >
+                                                                                {#each roleOptions as roleOption}
+                                                                                        <option value={roleOption.value}>
+                                                                                                {$i18n.t(roleOption.label)}
+                                                                                        </option>
+                                                                                {/each}
+                                                                        </select>
+                                                                </div>
+                                                                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                                        {$i18n.t(selectedRoleMeta.description)}
+                                                                </div>
+                                                        </div>
 
 							<div class="flex flex-col w-full mt-1">
 								<div class=" mb-1 text-xs text-gray-500">{$i18n.t('Name')}</div>

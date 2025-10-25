@@ -17,6 +17,44 @@ export const WEBUI_VERSION = APP_VERSION;
 export const WEBUI_BUILD_HASH = APP_BUILD_HASH;
 export const REQUIRED_OLLAMA_VERSION = '0.1.16';
 
+export const NON_ADMIN_ROLES = ['user', 'manager', 'developer', 'viewer'] as const;
+export const ACTIVE_USER_ROLES = ['admin', ...NON_ADMIN_ROLES] as const;
+
+export const ROLE_DEFINITIONS = {
+        admin: {
+                label: 'Administrator',
+                description: 'Full system access, billing, and security controls.',
+                badge: 'info'
+        },
+        manager: {
+                label: 'Manager',
+                description: 'Manage teams, groups, and shared resources without global configuration access.',
+                badge: 'warning'
+        },
+        developer: {
+                label: 'Developer',
+                description: 'Create and run Codex agents, manage models, and iterate on workflows.',
+                badge: 'success'
+        },
+        user: {
+                label: 'Member',
+                description: 'Standard workspace access with collaboration tools enabled by permission.',
+                badge: 'success'
+        },
+        viewer: {
+                label: 'Viewer',
+                description: 'Read-only access to shared chats, knowledge, and reports.',
+                badge: 'muted'
+        },
+        pending: {
+                label: 'Pending',
+                description: 'Awaiting approval before joining the workspace.',
+                badge: 'muted'
+        }
+} as const;
+
+export const ROLE_ORDER = ['admin', 'manager', 'developer', 'user', 'viewer', 'pending'] as const;
+
 export const SUPPORTED_FILE_TYPE = [
 	'application/epub+zip',
 	'application/pdf',

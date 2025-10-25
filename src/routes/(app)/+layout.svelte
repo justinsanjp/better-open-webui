@@ -19,7 +19,7 @@
 	import { getBanners } from '$lib/apis/configs';
 	import { getUserSettings } from '$lib/apis/users';
 
-	import { WEBUI_VERSION } from '$lib/constants';
+        import { WEBUI_VERSION, ACTIVE_USER_ROLES } from '$lib/constants';
 	import { compareVersion } from '$lib/utils';
 
 	import {
@@ -56,10 +56,10 @@
 
 	let version;
 
-	onMount(async () => {
-		if ($user === undefined || $user === null) {
-			await goto('/auth');
-		} else if (['user', 'admin'].includes($user?.role)) {
+        onMount(async () => {
+                if ($user === undefined || $user === null) {
+                        await goto('/auth');
+                } else if (ACTIVE_USER_ROLES.includes($user?.role)) {
 			try {
 				// Check if IndexedDB exists
 				DB = await openDB('Chats', 1);
@@ -273,7 +273,7 @@
 		<div
 			class=" text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-900 h-screen max-h-[100dvh] overflow-auto flex flex-row justify-end"
 		>
-			{#if !['user', 'admin'].includes($user?.role)}
+                        {#if !ACTIVE_USER_ROLES.includes($user?.role)}
 				<AccountPending />
 			{:else if localDBChats.length > 0}
 				<div class="fixed w-full h-full flex z-50">
