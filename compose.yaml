@@ -1,0 +1,15 @@
+services:
+  better-open-webui:
+    image: ghcr.io/justinsanjp/better-open-webui:main
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    volumes:
+      - open-webui:/app/backend/data
+    environment:
+      # - OPENAI_API_KEY=sk-...
+      # - OLLAMA_BASE_URL=http://ollama:11434
+      # - WEBUI_SECRET_KEY=change-me
+      # - PORT=8080
+volumes:
+  open-webui:
