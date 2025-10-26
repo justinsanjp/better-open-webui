@@ -3,7 +3,8 @@
 
 # ⚡ Codex WebUI – Enhanced Fork of Open WebUI
 
-> 🚧 **Work in Progress**: This project is under active development. Until a stable release is ready, we recommend using the official [Open WebUI](https://github.com/open-webui/open-webui) for production use.
+> 🚧 **Work in Progress**: This project is under active development. |Codex Feature got implemented. Please report any issues
+
 
 ---
 
