@@ -1392,5 +1392,9 @@
 	"Your entire contribution will go directly to the plugin developer; Open WebUI does not take any percentage. However, the chosen funding platform might have its own fees.": "تمام مشارکت شما مستقیماً به توسعه\u200cدهنده افزونه می\u200cرسد؛ Open WebUI هیچ درصدی دریافت نمی\u200cکند. با این حال، پلتفرم تأمین مالی انتخاب شده ممکن است کارمزد خود را داشته باشد.",
 	"Youtube": "یوتیوب",
 	"Youtube Language": "زبان یوتیوب",
-	"Youtube Proxy URL": "آدرس پراکسی یوتیوب"
+	"Youtube Proxy URL": "آدرس پراکسی یوتیوب",
+	"Permissions are not available for this user yet.": "Permissions are not available for this user yet.",
+	"Start exploring": "Start exploring",
+	"Connect a repository or upload code to unlock real-time insights.": "Connect a repository or upload code to unlock real-time insights.",
+	"Open documentation": "Open documentation"
 }
