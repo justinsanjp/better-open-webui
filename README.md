@@ -63,25 +63,97 @@ For more, check the [Open WebUI docs](https://docs.openwebui.com/).
 
 ## 🚀 Installation
 
-You can follow the original Open WebUI installation methods as they remain compatible with this fork.
+The fork stays compatible with the official Open WebUI deployment options. This section highlights the most common workflows and points you to the images that are already published for this project.
 
-### Docker (Recommended)
+### Prerequisites
+
+* Docker 24+ or Podman with Docker compatibility
+* Optional: Docker Buildx plugin for multi-architecture builds
+* Optional: Access to a GitHub Personal Access Token (PAT) with the `write:packages` scope for GHCR pushes
+
+### Use the Published Image (recommended)
+
+The easiest way to get started is to pull the maintained image from the GitHub Container Registry and run it directly:
 
 ```bash
+docker pull ghcr.io/justinsanjp/better-open-webui:main
+
 docker run -d -p 3000:8080 -v open-webui:/app/backend/data \
---name codex-webui --restart always ghcr.io/YOUR_USERNAME/codex-webui:main
+  --name better-open-webui --restart=always \
+  ghcr.io/justinsanjp/better-open-webui:main
 ```
 
-> For GPU support, Stripe config, or Codex activation, see `.env.example`.
+> Adjust the container name if `better-open-webui` is already taken on your host.
 
-### Python pip
+You can supply common configuration values through environment variables:
+
+```bash
+-e OPENAI_API_KEY=sk-... \
+-e OLLAMA_BASE_URL=http://ollama:11434 \
+-e WEBUI_SECRET_KEY=change-me \
+-e PORT=8080
+```
+
+For persistent storage the command above mounts the `open-webui` named volume to `/app/backend/data`, which holds conversations and other user data.
+
+### Build the Image Locally
+
+If you prefer to build the container yourself, the provided Dockerfile already contains the necessary defaults. The following command sets the expected build arguments:
+
+```bash
+docker build \
+  --build-arg BUILD_HASH="$(git rev-parse --short HEAD || echo dev-build)" \
+  --build-arg USE_OLLAMA=false \
+  --build-arg USE_CUDA=false \
+  --build-arg USE_CUDA_VER=cu128 \
+  --build-arg UID=1000 \
+  --build-arg GID=1000 \
+  -t ghcr.io/justinsanjp/better-open-webui:main .
+```
+
+Authenticate to GHCR before pushing a locally built image. Use a PAT with the `write:packages` scope:
+
+```bash
+echo "${GHCR_PAT}" | docker login ghcr.io -u justinsanjp --password-stdin
+
+docker push ghcr.io/justinsanjp/better-open-webui:main
+```
+
+To build and push a multi-architecture image (linux/amd64 and linux/arm64) via Buildx:
+
+```bash
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --build-arg BUILD_HASH="$(git rev-parse --short HEAD || echo dev-build)" \
+  --build-arg USE_OLLAMA=false \
+  --build-arg USE_CUDA=false \
+  --build-arg USE_CUDA_VER=cu128 \
+  --build-arg UID=1000 \
+  --build-arg GID=1000 \
+  -t ghcr.io/justinsanjp/better-open-webui:main . \
+  --push
+```
+
+### Deploy with Docker Compose
+
+The repository includes a ready-to-use [`compose.yaml`](compose.yaml). Launch the stack with:
+
+```bash
+docker compose up -d
+```
+
+Modify the `environment:` section in the compose file to enable API keys, Ollama backends, or custom ports.
+
+### Python (pip) Install
+
+The upstream Python package is still available if you prefer a non-container setup:
 
 ```bash
 pip install open-webui
 open-webui serve
 ```
 
-> You may override the UI and backend paths to use the Codex-enhanced UI.
+Refer to the upstream documentation for overriding the UI/backend paths to load the Codex enhancements.
 
 ---
 
