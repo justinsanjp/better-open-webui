@@ -1,5 +1,6 @@
 <script lang="ts">
-        import { WEBUI_BASE_URL, ROLE_DEFINITIONS, ROLE_ORDER } from '$lib/constants';
+        // Enable TypeScript for role metadata typings used within this component.
+  import { WEBUI_BASE_URL, ROLE_DEFINITIONS, ROLE_ORDER } from '$lib/constants';
 	import { WEBUI_NAME, config, user, showSidebar } from '$lib/stores';
 	import { goto } from '$app/navigation';
 	import { onMount, getContext } from 'svelte';
