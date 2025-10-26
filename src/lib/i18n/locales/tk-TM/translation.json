@@ -715,5 +715,9 @@
 	"You're offline.": "Offline.",
 	"You've reached your token limit for the day.": "Günüňize token çägiňize ýetdiňiz.",
 	"Merged Response": "Birleşdirilen jogap",
-	"ZIP Code": "Poçta Kody"
+	"ZIP Code": "Poçta Kody",
+	"Permissions are not available for this user yet.": "Permissions are not available for this user yet.",
+	"Start exploring": "Start exploring",
+	"Connect a repository or upload code to unlock real-time insights.": "Connect a repository or upload code to unlock real-time insights.",
+	"Open documentation": "Open documentation"
 }

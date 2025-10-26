@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+        // Enable TypeScript for role metadata typings used within this component.
         import { WEBUI_BASE_URL, ROLE_DEFINITIONS, ROLE_ORDER } from '$lib/constants';
 	import { WEBUI_NAME, config, user, showSidebar } from '$lib/stores';
 	import { goto } from '$app/navigation';
@@ -426,7 +427,6 @@ import ConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
 				{#each users as user, userIdx}
 					<tr class="bg-white dark:bg-gray-900 dark:border-gray-850 text-xs">
                                                 <td class="px-3 py-1 min-w-[7rem] w-32">
-                                                        {@const roleMeta = getRoleMeta(user.role);}
                                                         <button
                                                                 class="translate-y-0.5"
                                                                 on:click={() => {
@@ -435,8 +435,11 @@ import ConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
                                                                         showEditUserModal = true;
                                                                 }}
                                                         >
-                                                                <Tooltip content={$i18n.t(roleMeta.description)}>
-                                                                        <Badge type={roleMeta.badge} content={$i18n.t(roleMeta.label)} />
+                                                                <Tooltip content={$i18n.t(getRoleMeta(user.role).description)}>
+                                                                        <Badge
+                                                                                type={getRoleMeta(user.role).badge}
+                                                                                content={$i18n.t(getRoleMeta(user.role).label)}
+                                                                        />
                                                                 </Tooltip>
                                                         </button>
                                                 </td>

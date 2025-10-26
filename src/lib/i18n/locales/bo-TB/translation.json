@@ -1392,5 +1392,9 @@
 	"Your entire contribution will go directly to the plugin developer; Open WebUI does not take any percentage. However, the chosen funding platform might have its own fees.": "ཁྱེད་ཀྱི་ཞལ་འདེབས་ཆ་ཚང་ཐད་ཀར་ plugin གསར་སྤེལ་བ་ལ་འགྲོ་ངེས། Open WebUI ཡིས་བརྒྱ་ཆ་གང་ཡང་མི་ལེན། འོན་ཀྱང་། གདམ་ཟིན་པའི་མ་དངུལ་གཏོང་བའི་སྟེགས་བུ་ལ་དེའི་རང་གི་འགྲོ་གྲོན་ཡོད་སྲིད།",
 	"Youtube": "Youtube",
 	"Youtube Language": "Youtube སྐད་ཡིག",
-	"Youtube Proxy URL": "Youtube Proxy URL"
+	"Youtube Proxy URL": "Youtube Proxy URL",
+	"Permissions are not available for this user yet.": "Permissions are not available for this user yet.",
+	"Start exploring": "Start exploring",
+	"Connect a repository or upload code to unlock real-time insights.": "Connect a repository or upload code to unlock real-time insights.",
+	"Open documentation": "Open documentation"
 }
